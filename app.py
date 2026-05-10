@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 import random
 import string
+import threading
+import webbrowser
 
 
 app = Flask(__name__)
@@ -62,6 +64,9 @@ def index():
     parameters = generate_start_parameters()
     return render_template("index.html", parameters=parameters)
 
+def open_browser():
+    webbrowser.open_new("http://127.0.0.1:5000")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    threading.Timer(1.0, open_browser).start()
+    app.run(debug=False)
