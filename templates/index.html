@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rimworld Start Randomizer</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e1e;
+            color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            padding-top: 60px;
+        }
+
+        .card {
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 14px;
+            width: 420px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .row {
+            margin: 14px 0;
+            font-size: 18px;
+        }
+
+        .label {
+            color: #aaa;
+        }
+
+        .value {
+            font-weight: bold;
+            color: #f0c674;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 12px;
+            font-size: 17px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f0c674;
+            color: #1e1e1e;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #ffd86b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>RimWorld Start</h1>
+
+    <div class="row">
+        <span class="label">Scenario:</span>
+        <span class="value">{{ parameters.scenario }}</span>
+    </div>
+
+    <div class="row">
+        <span class="label">Storyteller:</span>
+        <span class="value">{{ parameters.storyteller }}</span>
+    </div>
+
+    <div class="row">
+        <span class="label">Difficulty:</span>
+        <span class="value">{{ parameters.difficulty }}</span>
+    </div>
+
+    <div class="row">
+        <span class="label">Seed:</span>
+        <span class="value">{{ parameters.seed }}</span>
+    </div>
+
+    <div class="row">
+        <span class="label">Map Position Clicks:</span>
+        <span class="value">{{ parameters.map_clicks }}</span>
+    </div>
+
+    <div class="row">
+        <span class="label">Character Rerolls:</span>
+        <span class="value">{{ parameters.character_rerolls }}</span>
+    </div>
+
+    <form method="get">
+        <button type="submit">Generate New Start</button>
+    </form>
+</div>
+
+</body>
+</html>
