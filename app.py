@@ -3,9 +3,31 @@ import random
 import string
 import threading
 import webbrowser
+import sys
+import os
 
 
-app = Flask(__name__)
+#--------------------------------------------------------------------------------------------
+# Resource Path Helper for PyInstaller
+#--------------------------------------------------------------------------------------------
+
+def resource_path(relative_path):
+    """
+    Get the correct resource path for development and PyInstaller .exe builds
+    """
+    base_path = getattr(sys, "_MEIPASS", os.path.abspath("."))
+
+    return os.path.join(base_path, relative_path)
+
+
+#--------------------------------------------------------------------------------------------
+# Flask App Setup
+#--------------------------------------------------------------------------------------------
+
+app = Flask(
+    __name__,
+    template_folder=resource_path("templates")
+)
 
 
 #--------------------------------------------------------------------------------------------
