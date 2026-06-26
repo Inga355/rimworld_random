@@ -12,12 +12,13 @@
             display: flex;
             justify-content: center;
             padding-top: 60px;
+            padding-bottom: 60px;
         }
 
         .card {
             background: #2d2d2d;
             padding: 30px;
-            border-radius: 14px;
+            border-radius: 8px;
             width: 420px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
         }
@@ -30,6 +31,29 @@
         .row {
             margin: 14px 0;
             font-size: 18px;
+        }
+
+        .dlc-options {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+
+        .dlc-title {
+            margin-bottom: 12px;
+            color: #aaa;
+            font-size: 16px;
+        }
+
+        .checkbox-row {
+            display: block;
+            margin: 10px 0;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .checkbox-row input {
+            margin-right: 8px;
         }
 
         .label {
@@ -64,37 +88,60 @@
 <div class="card">
     <h1>RimWorld Randomizer</h1>
 
-    <div class="row">
-        <span class="label">Scenario:</span>
-        <span class="value">{{ parameters.scenario }}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Storyteller:</span>
-        <span class="value">{{ parameters.storyteller }}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Difficulty:</span>
-        <span class="value">{{ parameters.difficulty }}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Seed:</span>
-        <span class="value">{{ parameters.seed }}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Map Position Clicks:</span>
-        <span class="value">{{ parameters.map_clicks }}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Character Rerolls:</span>
-        <span class="value">{{ parameters.character_rerolls }}</span>
-    </div>
-
     <form method="get">
+        <div class="row">
+            <span class="label">Scenario:</span>
+            <span class="value">{{ parameters.scenario }}</span>
+        </div>
+
+        <div class="row">
+            <span class="label">Storyteller:</span>
+            <span class="value">{{ parameters.storyteller }}</span>
+        </div>
+
+        <div class="row">
+            <span class="label">Difficulty:</span>
+            <span class="value">{{ parameters.difficulty }}</span>
+        </div>
+
+        <div class="row">
+            <span class="label">Seed:</span>
+            <span class="value">{{ parameters.seed }}</span>
+        </div>
+
+        <div class="row">
+            <span class="label">Map Position Clicks:</span>
+            <span class="value">{{ parameters.map_clicks }}</span>
+        </div>
+
+        <div class="row">
+            <span class="label">Character Rerolls:</span>
+            <span class="value">{{ parameters.character_rerolls }}</span>
+        </div>
+
+        {% for name, value in parameters.dlc_settings.items() %}
+            <div class="row">
+                <span class="label">{{ name }}:</span>
+                <span class="value">{{ value }}</span>
+            </div>
+        {% endfor %}
+
+        <div class="dlc-options">
+            <div class="dlc-title">DLCs</div>
+
+            {% for dlc_id, dlc in dlc_options.items() %}
+                <label class="checkbox-row">
+                    <input
+                        type="checkbox"
+                        name="dlc"
+                        value="{{ dlc_id }}"
+                        {% if dlc_id in active_dlcs %}checked{% endif %}
+                    >
+                    {{ dlc.name }}
+                </label>
+            {% endfor %}
+        </div>
+
         <button type="submit">Generate New Start</button>
     </form>
 </div>
