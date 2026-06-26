@@ -20,6 +20,8 @@
             --gold-bright: #ffd86b;
             --red: #b65343;
             --green: #8fb46b;
+            --screen-green: #9fdf7a;
+            --screen-green-bright: #c7ff99;
         }
 
         * {
@@ -37,11 +39,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 32px 18px;
+            padding: 18px;
         }
 
         .console {
-            width: min(960px, 100%);
+            width: min(920px, 100%);
             background:
                 linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 22%),
                 linear-gradient(180deg, #35322b 0, var(--panel) 42%, #1b1a17 100%);
@@ -51,7 +53,7 @@
                 0 28px 70px rgba(0, 0, 0, 0.65),
                 inset 0 0 0 2px rgba(0, 0, 0, 0.45),
                 inset 0 0 42px rgba(0, 0, 0, 0.42);
-            padding: 18px;
+            padding: 14px;
             position: relative;
         }
 
@@ -82,7 +84,7 @@
             justify-content: space-between;
             gap: 16px;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
             padding: 0 22px;
             color: var(--muted);
             font-size: 13px;
@@ -126,7 +128,7 @@
                 inset 0 0 0 1px rgba(240, 198, 116, 0.2),
                 inset 0 0 44px rgba(0, 0, 0, 0.72),
                 0 0 0 8px #211f1a;
-            padding: 26px;
+            padding: 20px;
         }
 
         .screen::before {
@@ -175,19 +177,21 @@
             justify-content: space-between;
             gap: 18px;
             align-items: flex-start;
-            margin-bottom: 22px;
+            margin-bottom: 16px;
             position: relative;
             z-index: 1;
         }
 
         h1 {
             margin: 0 0 6px;
-            color: var(--gold);
+            color: var(--screen-green);
             font-family: Arial, sans-serif;
-            font-size: 34px;
+            font-size: 30px;
             line-height: 1;
             text-transform: uppercase;
-            text-shadow: 0 0 16px rgba(240, 198, 116, 0.24);
+            text-shadow:
+                0 0 8px rgba(159, 223, 122, 0.42),
+                0 0 22px rgba(159, 223, 122, 0.24);
         }
 
         .subtitle {
@@ -210,7 +214,7 @@
         .layout {
             display: grid;
             grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.8fr);
-            gap: 20px;
+            gap: 16px;
             position: relative;
             z-index: 1;
         }
@@ -221,6 +225,38 @@
             background: rgba(0, 0, 0, 0.18);
             border-radius: 4px;
             padding: 16px;
+        }
+
+        .readout {
+            display: flex;
+            flex-direction: column;
+            height: 300px;
+            min-height: 0;
+        }
+
+        .readout-list {
+            flex: 1;
+            height: 238px;
+            min-height: 0;
+            overflow-y: auto;
+            padding-right: 8px;
+            scrollbar-color: rgba(159, 223, 122, 0.5) rgba(0, 0, 0, 0.24);
+            scrollbar-width: thin;
+        }
+
+        .readout-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .readout-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.24);
+            border-radius: 8px;
+        }
+
+        .readout-list::-webkit-scrollbar-thumb {
+            background: rgba(159, 223, 122, 0.5);
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(159, 223, 122, 0.24);
         }
 
         .section-title {
@@ -268,9 +304,11 @@
         }
 
         .value {
-            color: var(--gold);
+            color: var(--screen-green);
             font-weight: bold;
-            text-shadow: 0 0 12px rgba(240, 198, 116, 0.18);
+            text-shadow:
+                0 0 7px rgba(159, 223, 122, 0.44),
+                0 0 18px rgba(159, 223, 122, 0.18);
             overflow-wrap: anywhere;
         }
 
@@ -322,14 +360,17 @@
 
         .checkbox-row input:checked + .switch::before {
             transform: translateX(21px);
-            background: var(--gold);
+            background: var(--screen-green);
+            box-shadow:
+                0 0 8px rgba(159, 223, 122, 0.72),
+                0 2px 4px rgba(0, 0, 0, 0.65);
         }
 
         .checkbox-row input:checked + .switch {
-            border-color: rgba(240, 198, 116, 0.75);
+            border-color: rgba(159, 223, 122, 0.82);
             box-shadow:
                 inset 0 2px 8px rgba(0, 0, 0, 0.7),
-                0 0 12px rgba(240, 198, 116, 0.18);
+                0 0 13px rgba(159, 223, 122, 0.28);
         }
 
         .dlc-name {
@@ -339,10 +380,10 @@
 
         .controls {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(230px, 0.45fr);
+            grid-template-columns: minmax(0, 1fr) 180px;
             gap: 18px;
-            align-items: stretch;
-            margin-top: 18px;
+            align-items: center;
+            margin-top: 14px;
             position: relative;
             z-index: 1;
         }
@@ -352,7 +393,7 @@
             color: var(--muted);
             background: rgba(0, 0, 0, 0.13);
             padding: 13px 14px;
-            min-height: 72px;
+            min-height: 58px;
             border-radius: 4px;
             font-size: 13px;
             line-height: 1.45;
@@ -360,23 +401,29 @@
         }
 
         button {
-            width: 100%;
-            min-height: 72px;
-            border: 1px solid #8e6f32;
-            border-radius: 6px;
+            width: 132px;
+            height: 132px;
+            justify-self: center;
+            border: 5px solid #3e1b16;
+            border-radius: 50%;
             cursor: pointer;
             background:
-                linear-gradient(180deg, #ffdf81 0, var(--gold) 42%, #a97528 100%);
-            color: #191510;
+                radial-gradient(circle at 38% 28%, #ffb7a8 0, #df5d49 28%, #9e2e25 58%, #551b18 100%);
+            color: #f9e7cf;
             font-family: Arial, sans-serif;
-            font-size: 18px;
+            font-size: 13px;
             font-weight: 900;
+            line-height: 1.12;
             text-transform: uppercase;
+            text-shadow:
+                0 1px 0 rgba(0, 0, 0, 0.55),
+                0 0 12px rgba(255, 210, 172, 0.36);
             box-shadow:
-                inset 0 2px 0 rgba(255, 255, 255, 0.34),
-                inset 0 -5px 0 rgba(73, 45, 14, 0.45),
-                0 8px 0 #3a2a18,
-                0 16px 24px rgba(0, 0, 0, 0.45);
+                inset 0 8px 14px rgba(255, 255, 255, 0.26),
+                inset 0 -14px 18px rgba(42, 6, 6, 0.58),
+                0 0 18px rgba(182, 83, 67, 0.34),
+                0 8px 0 #251412,
+                0 20px 28px rgba(0, 0, 0, 0.55);
             transition: transform 100ms ease, box-shadow 100ms ease, filter 100ms ease;
         }
 
@@ -387,10 +434,11 @@
         button:active {
             transform: translateY(6px);
             box-shadow:
-                inset 0 2px 0 rgba(255, 255, 255, 0.26),
-                inset 0 -2px 0 rgba(73, 45, 14, 0.45),
-                0 2px 0 #3a2a18,
-                0 8px 16px rgba(0, 0, 0, 0.42);
+                inset 0 4px 12px rgba(255, 255, 255, 0.2),
+                inset 0 -6px 12px rgba(42, 6, 6, 0.62),
+                0 0 26px rgba(182, 83, 67, 0.5),
+                0 2px 0 #251412,
+                0 10px 18px rgba(0, 0, 0, 0.5);
         }
 
         @media (max-width: 760px) {
@@ -463,42 +511,44 @@
                 <div class="readout">
                     <div class="section-title">Generated start parameters</div>
 
-                    <div class="row">
-                        <span class="label">Scenario</span>
-                        <span class="value">{{ parameters.scenario }}</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Storyteller</span>
-                        <span class="value">{{ parameters.storyteller }}</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Difficulty</span>
-                        <span class="value">{{ parameters.difficulty }}</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Seed</span>
-                        <span class="value">{{ parameters.seed }}</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Map Clicks</span>
-                        <span class="value">{{ parameters.map_clicks }}</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Rerolls</span>
-                        <span class="value">{{ parameters.character_rerolls }}</span>
-                    </div>
-
-                    {% for name, value in parameters.dlc_settings.items() %}
+                    <div class="readout-list">
                         <div class="row">
-                            <span class="label">{{ name }}</span>
-                            <span class="value">{{ value }}</span>
+                            <span class="label">Scenario</span>
+                            <span class="value">{{ parameters.scenario }}</span>
                         </div>
-                    {% endfor %}
+
+                        <div class="row">
+                            <span class="label">Storyteller</span>
+                            <span class="value">{{ parameters.storyteller }}</span>
+                        </div>
+
+                        <div class="row">
+                            <span class="label">Difficulty</span>
+                            <span class="value">{{ parameters.difficulty }}</span>
+                        </div>
+
+                        <div class="row">
+                            <span class="label">Seed</span>
+                            <span class="value">{{ parameters.seed }}</span>
+                        </div>
+
+                        <div class="row">
+                            <span class="label">Map Clicks</span>
+                            <span class="value">{{ parameters.map_clicks }}</span>
+                        </div>
+
+                        <div class="row">
+                            <span class="label">Rerolls</span>
+                            <span class="value">{{ parameters.character_rerolls }}</span>
+                        </div>
+
+                        {% for name, value in parameters.dlc_settings.items() %}
+                            <div class="row">
+                                <span class="label">{{ name }}</span>
+                                <span class="value">{{ value }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
 
                 <div class="dlc-panel">
@@ -521,9 +571,9 @@
 
             <div class="controls">
                 <div class="flavor">
-                    Select available modules, pull the battered launch control, and accept whatever route the ship still remembers.
+                    Select available modules, hit the emergency control, and accept whatever route the ship still remembers.
                 </div>
-                <button type="submit">Pull to Randomize</button>
+                <button type="submit">Push to Randomize</button>
             </div>
         </section>
     </form>
