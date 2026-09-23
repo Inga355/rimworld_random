@@ -3,581 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090c0a">
     <title>RimWorld Randomizer</title>
-
-    <style>
-        :root {
-            --bg: #151515;
-            --panel: #292722;
-            --panel-dark: #171715;
-            --screen: #10130f;
-            --screen-soft: #171c15;
-            --line: #4a463c;
-            --line-soft: rgba(240, 198, 116, 0.18);
-            --text: #e8e1d2;
-            --muted: #9b9486;
-            --gold: #f0c674;
-            --gold-bright: #ffd86b;
-            --red: #b65343;
-            --green: #8fb46b;
-            --screen-green: #9fdf7a;
-            --screen-green-bright: #c7ff99;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-            margin: 0;
-            font-family: "Courier New", Consolas, monospace;
-            background:
-                linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent 30%),
-                radial-gradient(circle at top, #2b2a26 0, var(--bg) 48%, #080808 100%);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-        }
-
-        .console {
-            width: min(920px, 100%);
-            background:
-                linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 22%),
-                linear-gradient(180deg, #35322b 0, var(--panel) 42%, #1b1a17 100%);
-            border: 1px solid #5a5448;
-            border-radius: 8px;
-            box-shadow:
-                0 28px 70px rgba(0, 0, 0, 0.65),
-                inset 0 0 0 2px rgba(0, 0, 0, 0.45),
-                inset 0 0 42px rgba(0, 0, 0, 0.42);
-            padding: 14px;
-            position: relative;
-        }
-
-        .console::before,
-        .console::after {
-            content: "";
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #111;
-            border: 2px solid #605848;
-            box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.2);
-        }
-
-        .console::before {
-            left: 16px;
-            top: 16px;
-        }
-
-        .console::after {
-            right: 16px;
-            bottom: 16px;
-        }
-
-        .console-top {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 0 22px;
-            color: var(--muted);
-            font-size: 13px;
-            letter-spacing: 0;
-            text-transform: uppercase;
-        }
-
-        .status-strip {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        .lamp {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 12px rgba(143, 180, 107, 0.8);
-        }
-
-        .lamp.warning {
-            background: var(--red);
-            box-shadow: 0 0 12px rgba(182, 83, 67, 0.8);
-        }
-
-        form {
-            margin: 0;
-        }
-
-        .screen {
-            position: relative;
-            overflow: hidden;
-            background:
-                linear-gradient(180deg, rgba(240, 198, 116, 0.05), transparent 45%),
-                radial-gradient(circle at center, var(--screen-soft) 0, var(--screen) 68%);
-            border: 2px solid #15130f;
-            border-radius: 6px;
-            box-shadow:
-                inset 0 0 0 1px rgba(240, 198, 116, 0.2),
-                inset 0 0 44px rgba(0, 0, 0, 0.72),
-                0 0 0 8px #211f1a;
-            padding: 20px;
-        }
-
-        .screen::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background:
-                repeating-linear-gradient(
-                    0deg,
-                    rgba(255, 255, 255, 0.035) 0,
-                    rgba(255, 255, 255, 0.035) 1px,
-                    transparent 1px,
-                    transparent 4px
-                );
-            opacity: 0.55;
-            mix-blend-mode: screen;
-        }
-
-        .screen::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            border: 1px solid rgba(240, 198, 116, 0.22);
-            border-radius: 6px;
-            animation: screen-flicker 5s infinite;
-        }
-
-        @keyframes screen-flicker {
-            0%, 96%, 100% {
-                opacity: 0.55;
-            }
-
-            97% {
-                opacity: 0.18;
-            }
-
-            98% {
-                opacity: 0.8;
-            }
-        }
-
-        .screen-header {
-            display: flex;
-            justify-content: space-between;
-            gap: 18px;
-            align-items: flex-start;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        h1 {
-            margin: 0 0 6px;
-            color: var(--screen-green);
-            font-family: Arial, sans-serif;
-            font-size: 30px;
-            line-height: 1;
-            text-transform: uppercase;
-            text-shadow:
-                0 0 8px rgba(159, 223, 122, 0.42),
-                0 0 22px rgba(159, 223, 122, 0.24);
-        }
-
-        .subtitle {
-            color: var(--muted);
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-
-        .warning-label {
-            flex: 0 0 auto;
-            border: 1px solid rgba(182, 83, 67, 0.7);
-            color: #e2a192;
-            background: rgba(182, 83, 67, 0.12);
-            padding: 8px 10px;
-            font-size: 12px;
-            text-transform: uppercase;
-            transform: rotate(1.5deg);
-        }
-
-        .layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.8fr);
-            gap: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .readout,
-        .dlc-panel {
-            border: 1px solid var(--line-soft);
-            background: rgba(0, 0, 0, 0.18);
-            border-radius: 4px;
-            padding: 16px;
-        }
-
-        .readout {
-            display: flex;
-            flex-direction: column;
-            height: 300px;
-            min-height: 0;
-        }
-
-        .readout-list {
-            flex: 1;
-            height: 238px;
-            min-height: 0;
-            overflow-y: auto;
-            padding-right: 8px;
-            scrollbar-color: rgba(159, 223, 122, 0.5) rgba(0, 0, 0, 0.24);
-            scrollbar-width: thin;
-        }
-
-        .readout-list::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .readout-list::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.24);
-            border-radius: 8px;
-        }
-
-        .readout-list::-webkit-scrollbar-thumb {
-            background: rgba(159, 223, 122, 0.5);
-            border-radius: 8px;
-            box-shadow: 0 0 8px rgba(159, 223, 122, 0.24);
-        }
-
-        .section-title {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 13px;
-            color: var(--muted);
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-
-        .section-title::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: var(--line-soft);
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: minmax(128px, 0.8fr) minmax(0, 1.2fr);
-            gap: 14px;
-            align-items: baseline;
-            min-height: 33px;
-            padding: 8px 0;
-            border-bottom: 1px dotted rgba(240, 198, 116, 0.16);
-            font-size: 17px;
-        }
-
-        .row:last-child {
-            border-bottom: 0;
-        }
-
-        .label {
-            color: var(--muted);
-            text-transform: uppercase;
-            font-size: 13px;
-        }
-
-        .label::before {
-            content: "> ";
-            color: rgba(143, 180, 107, 0.8);
-        }
-
-        .value {
-            color: var(--screen-green);
-            font-weight: bold;
-            text-shadow:
-                0 0 7px rgba(159, 223, 122, 0.44),
-                0 0 18px rgba(159, 223, 122, 0.18);
-            overflow-wrap: anywhere;
-        }
-
-        .dlc-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .checkbox-row {
-            display: grid;
-            grid-template-columns: 48px minmax(0, 1fr);
-            gap: 10px;
-            align-items: center;
-            min-height: 42px;
-            color: var(--text);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .checkbox-row input {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .switch {
-            width: 48px;
-            height: 24px;
-            border-radius: 3px;
-            background: #1a1916;
-            border: 1px solid #4c473c;
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
-            position: relative;
-        }
-
-        .switch::before {
-            content: "";
-            position: absolute;
-            top: 3px;
-            left: 4px;
-            width: 17px;
-            height: 16px;
-            border-radius: 2px;
-            background: #6b6558;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.65);
-            transition: transform 140ms ease, background 140ms ease;
-        }
-
-        .checkbox-row input:checked + .switch::before {
-            transform: translateX(21px);
-            background: var(--screen-green);
-            box-shadow:
-                0 0 8px rgba(159, 223, 122, 0.72),
-                0 2px 4px rgba(0, 0, 0, 0.65);
-        }
-
-        .checkbox-row input:checked + .switch {
-            border-color: rgba(159, 223, 122, 0.82);
-            box-shadow:
-                inset 0 2px 8px rgba(0, 0, 0, 0.7),
-                0 0 13px rgba(159, 223, 122, 0.28);
-        }
-
-        .dlc-name {
-            font-size: 15px;
-            text-transform: uppercase;
-        }
-
-        .controls {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 180px;
-            gap: 18px;
-            align-items: center;
-            margin-top: 14px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .flavor {
-            border: 1px dashed rgba(240, 198, 116, 0.25);
-            color: var(--muted);
-            background: rgba(0, 0, 0, 0.13);
-            padding: 13px 14px;
-            min-height: 58px;
-            border-radius: 4px;
-            font-size: 13px;
-            line-height: 1.45;
-            text-transform: uppercase;
-        }
-
-        button {
-            width: 132px;
-            height: 132px;
-            justify-self: center;
-            border: 5px solid #3e1b16;
-            border-radius: 50%;
-            cursor: pointer;
-            background:
-                radial-gradient(circle at 38% 28%, #ffb7a8 0, #df5d49 28%, #9e2e25 58%, #551b18 100%);
-            color: #f9e7cf;
-            font-family: Arial, sans-serif;
-            font-size: 13px;
-            font-weight: 900;
-            line-height: 1.12;
-            text-transform: uppercase;
-            text-shadow:
-                0 1px 0 rgba(0, 0, 0, 0.55),
-                0 0 12px rgba(255, 210, 172, 0.36);
-            box-shadow:
-                inset 0 8px 14px rgba(255, 255, 255, 0.26),
-                inset 0 -14px 18px rgba(42, 6, 6, 0.58),
-                0 0 18px rgba(182, 83, 67, 0.34),
-                0 8px 0 #251412,
-                0 20px 28px rgba(0, 0, 0, 0.55);
-            transition: transform 100ms ease, box-shadow 100ms ease, filter 100ms ease;
-        }
-
-        button:hover {
-            filter: brightness(1.08);
-        }
-
-        button:active {
-            transform: translateY(6px);
-            box-shadow:
-                inset 0 4px 12px rgba(255, 255, 255, 0.2),
-                inset 0 -6px 12px rgba(42, 6, 6, 0.62),
-                0 0 26px rgba(182, 83, 67, 0.5),
-                0 2px 0 #251412,
-                0 10px 18px rgba(0, 0, 0, 0.5);
-        }
-
-        @media (max-width: 760px) {
-            body {
-                align-items: flex-start;
-                padding: 18px 12px;
-            }
-
-            .console {
-                padding: 14px;
-            }
-
-            .console-top,
-            .screen-header,
-            .layout,
-            .controls {
-                grid-template-columns: 1fr;
-            }
-
-            .console-top,
-            .screen-header {
-                display: block;
-                padding: 0;
-            }
-
-            .status-strip,
-            .warning-label {
-                margin-top: 10px;
-            }
-
-            .screen {
-                padding: 18px;
-            }
-
-            h1 {
-                font-size: 28px;
-            }
-
-            .row {
-                grid-template-columns: 1fr;
-                gap: 3px;
-                font-size: 16px;
-            }
-        }
-    </style>
+    <link rel="icon" href="data:,">
+    <link rel="preload" href="{{ url_for('static', filename='fonts/ShareTechMono-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='terminal.css') }}">
+    <script src="{{ url_for('static', filename='terminal.js') }}" defer></script>
 </head>
 <body>
+    {% macro icon(name) -%}
+        <span class="icon" style="--icon: url('{{ url_for('static', filename='icons/' ~ name ~ '.svg') }}')" aria-hidden="true"></span>
+    {%- endmacro %}
+    {% macro parameter(name, value, symbol) -%}
+        <div class="parameter">
+            <dt>{{ icon(symbol) }}<span>{{ name }}</span></dt>
+            <dd>{{ value }}</dd>
+        </div>
+    {%- endmacro %}
 
-<main class="console">
-    <div class="console-top">
-        <span>Shipboard survival terminal</span>
-        <span class="status-strip">
-            <span class="lamp"></span>
-            <span class="lamp warning"></span>
-            <span>Core systems unstable</span>
-        </span>
-    </div>
-
-    <form method="get">
-        <section class="screen">
-            <div class="screen-header">
-                <div>
-                    <h1>RimWorld Randomizer</h1>
-                    <div class="subtitle">Start computer // colony route generator</div>
-                </div>
-                <div class="warning-label">Manual override required</div>
-            </div>
-
-            <div class="layout">
-                <div class="readout">
-                    <div class="section-title">Generated start parameters</div>
-
-                    <div class="readout-list">
-                        <div class="row">
-                            <span class="label">Scenario</span>
-                            <span class="value">{{ parameters.scenario }}</span>
-                        </div>
-
-                        <div class="row">
-                            <span class="label">Storyteller</span>
-                            <span class="value">{{ parameters.storyteller }}</span>
-                        </div>
-
-                        <div class="row">
-                            <span class="label">Difficulty</span>
-                            <span class="value">{{ parameters.difficulty }}</span>
-                        </div>
-
-                        <div class="row">
-                            <span class="label">Seed</span>
-                            <span class="value">{{ parameters.seed }}</span>
-                        </div>
-
-                        <div class="row">
-                            <span class="label">Map Clicks</span>
-                            <span class="value">{{ parameters.map_clicks }}</span>
-                        </div>
-
-                        <div class="row">
-                            <span class="label">Rerolls</span>
-                            <span class="value">{{ parameters.character_rerolls }}</span>
-                        </div>
-
+    <main class="console" aria-label="Shipboard start terminal">
+        <form method="get" class="terminal-form">
+            <section class="screen" aria-labelledby="terminal-title">
+                <header class="screen-header">
+                    <h1 id="terminal-title">RimWorld Randomizer</h1>
+                    <p>START COMPUTER <span class="cursor" aria-hidden="true">_</span></p>
+                </header>
+                <div class="readout" tabindex="0" role="region" aria-label="Generated start parameters">
+                    <dl class="readout-list">
+                        {{ parameter('Scenario', parameters.scenario, 'flag') }}
+                        {{ parameter('Storyteller', parameters.storyteller, 'user-round') }}
+                        {{ parameter('Difficulty', parameters.difficulty, 'chart-no-axes-column-increasing') }}
+                        {{ parameter('Seed', parameters.seed, 'hash') }}
+                        {{ parameter('Map Clicks', parameters.map_clicks, 'crosshair') }}
+                        {{ parameter('Character Rerolls', parameters.character_rerolls, 'rotate-cw') }}
                         {% for name, value in parameters.dlc_settings.items() %}
-                            <div class="row">
-                                <span class="label">{{ name }}</span>
-                                <span class="value">{{ value }}</span>
-                            </div>
+                            {{ parameter(name, value, 'cpu') }}
                         {% endfor %}
-                    </div>
+                    </dl>
                 </div>
+                <footer class="screen-footer"><span>COLONY ROUTE / READY</span><span>SYS. 01</span></footer>
+            </section>
 
-                <div class="dlc-panel">
-                    <div class="section-title">DLC uplinks</div>
+            <fieldset class="dlc-panel">
+                <legend>DLC MODULES</legend>
+                {% for dlc_id, dlc in dlc_options.items() %}
+                    <label class="module">
+                        <input type="checkbox" name="dlc" value="{{ dlc_id }}" {% if dlc_id in active_dlcs %}checked{% endif %}>
+                        <span class="indicator" aria-hidden="true"></span>
+                        <span class="module-name">{{ dlc.name }}</span>
+                        <span class="switch" aria-hidden="true">
+                            <span class="switch-state on">ON</span>
+                            <span class="switch-state off">OFF</span>
+                            <span class="switch-knob"></span>
+                        </span>
+                    </label>
+                {% endfor %}
+            </fieldset>
 
-                    {% for dlc_id, dlc in dlc_options.items() %}
-                        <label class="checkbox-row">
-                            <input
-                                type="checkbox"
-                                name="dlc"
-                                value="{{ dlc_id }}"
-                                {% if dlc_id in active_dlcs %}checked{% endif %}
-                            >
-                            <span class="switch"></span>
-                            <span class="dlc-name">{{ dlc.name }}</span>
-                        </label>
-                    {% endfor %}
+            <section class="status-panel" aria-labelledby="status-title">
+                <h2 id="status-title">STATUS</h2>
+                <p><span class="status-light" aria-hidden="true"></span>SYSTEMS NOMINAL</p>
+                <p><span class="status-light amber" aria-hidden="true"></span><span>MODULES ONLINE<br><span id="module-count">{{ active_dlcs|length }} / {{ dlc_options|length }}</span></span></p>
+            </section>
+
+            <button class="lever" type="submit" title="Pull to randomize" aria-label="Pull to randomize">
+                <span class="lever-label">{{ icon('chevrons-down') }}<span>PULL TO RANDOMIZE</span>{{ icon('chevrons-down') }}</span>
+                <span class="lever-well" aria-hidden="true"></span>
+                <span class="lever-grip" aria-hidden="true"></span>
+            </button>
+
+            <section class="log-panel" aria-labelledby="log-title">
+                <h2 id="log-title">LOG OUTPUT</h2>
+                <div role="status" aria-live="polite" aria-atomic="true" id="terminal-log">
+                    <p>Route generated.</p>
+                    <p>Awaiting input...</p>
+                    <p>Stand by.</p>
                 </div>
-            </div>
-
-            <div class="controls">
-                <div class="flavor">
-                    Select available modules, hit the emergency control, and accept whatever route the ship still remembers.
-                </div>
-                <button type="submit">Push to Randomize</button>
-            </div>
-        </section>
-    </form>
-</main>
-
+                <span class="log-cursor" aria-hidden="true">_</span>
+            </section>
+        </form>
+    </main>
 </body>
 </html>
