@@ -1,0 +1,17 @@
+<div class="service-controls" role="group" aria-label="Terminal atmosphere" hidden>
+    <label class="service-toggle sound-control" title="Ambient sound">
+        <input type="checkbox" id="sound-toggle" aria-label="Ambient sound" autocomplete="off">
+        <span class="sound-on">{{ icon('volume-2') }}</span>
+        <span class="sound-off">{{ icon('volume-x') }}</span>
+    </label>
+    <div class="volume-control">
+        <div class="volume-segments" aria-hidden="true">
+            {% for segment in range(10) %}<span></span>{% endfor %}
+        </div>
+        <input type="range" id="volume" min="0" max="100" value="30" step="1" aria-label="Volume" title="Volume: 30%">
+    </div>
+    <label class="service-toggle effects-control" title="Light and screen effects">
+        <input type="checkbox" id="effects-toggle" aria-label="Light and screen effects" checked>
+        {{ icon('lightbulb') }}
+    </label>
+</div>

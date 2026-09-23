@@ -2,102 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rimworld Start Randomizer</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #1e1e1e;
-            color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            padding-top: 60px;
-        }
-
-        .card {
-            background: #2d2d2d;
-            padding: 30px;
-            border-radius: 14px;
-            width: 420px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .row {
-            margin: 14px 0;
-            font-size: 18px;
-        }
-
-        .label {
-            color: #aaa;
-        }
-
-        .value {
-            font-weight: bold;
-            color: #f0c674;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 25px;
-            padding: 12px;
-            font-size: 17px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background: #f0c674;
-            color: #1e1e1e;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background: #ffd86b;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090c0a">
+    <title>RimWorld Randomizer</title>
+    <link rel="icon" href="data:,">
+    <link rel="preload" href="{{ url_for('static', filename='fonts/ShareTechMono-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='terminal.css') }}">
+    <script src="{{ url_for('static', filename='terminal.js') }}" type="module"></script>
 </head>
 <body>
+    {% from '_icons.html' import icon %}
 
-<div class="card">
-    <h1>RimWorld Start</h1>
+    <main class="console" aria-label="Shipboard start terminal">
+        <form method="get" class="terminal-form">
+            <section class="screen" aria-labelledby="terminal-title">
+                <header class="screen-header">
+                    <h1 id="terminal-title">RimWorld Randomizer</h1>
+                    <p>START COMPUTER <span class="cursor" aria-hidden="true">_</span></p>
+                </header>
+                <div class="readout" tabindex="0" role="region" aria-label="Generated start parameters">
+                    <dl class="readout-list">
+                        {% include '_parameters.html' %}
+                    </dl>
+                </div>
+                <footer class="screen-footer"><span id="route-status" role="status">COLONY ROUTE / READY</span><span>SYS. 01</span></footer>
+                <dialog class="boot-dialog" aria-labelledby="boot-title" aria-describedby="boot-description">
+                    <p class="boot-code">EMERGENCY POWER / STANDBY</p>
+                    <h2 id="boot-title">AUDIO SUBSYSTEM</h2>
+                    <p id="boot-description">Activate acoustic ship monitoring?</p>
+                    <button type="button" id="boot-start">{{ icon('volume-2') }} POWER UP SYSTEMS</button>
+                    <button type="button" id="boot-silent">Continue without audio</button>
+                </dialog>
+            </section>
 
-    <div class="row">
-        <span class="label">Scenario:</span>
-        <span class="value">{{ parameters.scenario }}</span>
-    </div>
+            <fieldset class="dlc-panel">
+                <legend>DLC MODULES</legend>
+                {% for dlc_id, dlc in dlc_options.items() %}
+                    <label class="module">
+                        <input type="checkbox" name="dlc" value="{{ dlc_id }}" {% if dlc_id in active_dlcs %}checked{% endif %}>
+                        <span class="indicator" aria-hidden="true"></span>
+                        <span class="module-name">{{ dlc.name }}</span>
+                        <span class="switch" aria-hidden="true">
+                            <span class="switch-state on">ON</span>
+                            <span class="switch-state off">OFF</span>
+                            <span class="switch-knob"></span>
+                        </span>
+                    </label>
+                {% endfor %}
+            </fieldset>
 
-    <div class="row">
-        <span class="label">Storyteller:</span>
-        <span class="value">{{ parameters.storyteller }}</span>
-    </div>
+            <section class="status-panel" aria-labelledby="status-title">
+                <h2 id="status-title">STATUS</h2>
+                <p><span class="status-light" aria-hidden="true"></span>SYSTEMS NOMINAL</p>
+                <p><span class="status-light" aria-hidden="true"></span>MODULES <span id="module-count">{{ active_dlcs|length }} / {{ dlc_options|length }}</span></p>
+                {% include '_service_controls.html' %}
+            </section>
 
-    <div class="row">
-        <span class="label">Difficulty:</span>
-        <span class="value">{{ parameters.difficulty }}</span>
-    </div>
+            <button class="lever" type="submit" title="Pull to randomize" aria-label="Pull to randomize">
+                <span class="lever-label">{{ icon('chevrons-down') }}<span>PULL TO RANDOMIZE</span>{{ icon('chevrons-down') }}</span>
+                <span class="lever-well" aria-hidden="true"></span>
+                <span class="lever-grip" aria-hidden="true"></span>
+            </button>
 
-    <div class="row">
-        <span class="label">Seed:</span>
-        <span class="value">{{ parameters.seed }}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Map Position Clicks:</span>
-        <span class="value">{{ parameters.map_clicks }}</span>
-    </div>
-
-    <div class="row">
-        <span class="label">Character Rerolls:</span>
-        <span class="value">{{ parameters.character_rerolls }}</span>
-    </div>
-
-    <form method="get">
-        <button type="submit">Generate New Start</button>
-    </form>
-</div>
-
+            <section class="log-panel" aria-labelledby="log-title">
+                <h2 id="log-title">LOG OUTPUT</h2>
+                <div role="status" aria-live="polite" aria-atomic="true" id="terminal-log">
+                    <p>Route generated.</p>
+                    <p>Awaiting input...</p>
+                    <p>Stand by.</p>
+                </div>
+                <span class="log-cursor" aria-hidden="true">_</span>
+            </section>
+        </form>
+    </main>
 </body>
 </html>

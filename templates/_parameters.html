@@ -1,0 +1,16 @@
+{% from '_icons.html' import icon %}
+{% macro parameter(name, value, symbol) -%}
+    <div class="parameter">
+        <dt>{{ icon(symbol) }}<span>{{ name }}</span></dt>
+        <dd>{{ value }}</dd>
+    </div>
+{%- endmacro %}
+{{ parameter('Scenario', parameters.scenario, 'flag') }}
+{{ parameter('Storyteller', parameters.storyteller, 'user-round') }}
+{{ parameter('Difficulty', parameters.difficulty, 'chart-no-axes-column-increasing') }}
+{{ parameter('Seed', parameters.seed, 'hash') }}
+{{ parameter('Map Clicks', parameters.map_clicks, 'crosshair') }}
+{{ parameter('Character Rerolls', parameters.character_rerolls, 'rotate-cw') }}
+{% for name, value in parameters.dlc_settings.items() %}
+    {{ parameter(name, value, 'cpu') }}
+{% endfor %}
