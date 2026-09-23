@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from app import (
     DLC_OPTIONS,
@@ -48,6 +49,38 @@ class RandomizerTests(unittest.TestCase):
 
         self.assertIn('value="biotech"', html)
         self.assertIn("checked", html)
+
+    def test_json_readout_matches_full_page(self):
+        parameters = generate_start_parameters(["royalty", "biotech"])
+        with patch("app.generate_start_parameters", return_value=parameters):
+            with app.test_client() as client:
+                page = client.get("/?dlc=royalty&dlc=biotech")
+                response = client.get("/?dlc=royalty&dlc=biotech", headers={"Accept": "application/json"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.is_json)
+        readout = response.get_json()["readout"].strip()
+        self.assertIn(readout, page.get_data(as_text=True))
+        self.assertEqual(readout.count('class="parameter"'), 8)
+        self.assertEqual(response.headers["Cache-Control"], "no-store")
+        self.assertIn("Accept", response.vary)
+
+    def test_json_readout_filters_unknown_dlcs(self):
+        with app.test_client() as client:
+            response = client.get("/?dlc=unknown&dlc=anomaly", headers={"Accept": "application/json"})
+
+        readout = response.get_json()["readout"]
+        self.assertEqual(readout.count('class="parameter"'), 7)
+        self.assertIn("Anomaly content", readout)
+        self.assertNotIn("Royalty focus", readout)
+
+    def test_normal_navigation_still_returns_html(self):
+        with app.test_client() as client:
+            response = client.get("/", headers={"Accept": "*/*"})
+
+        self.assertEqual(response.mimetype, "text/html")
+        self.assertIn(b'<form method="get"', response.data)
+        self.assertEqual(response.headers["Cache-Control"], "no-store")
 
 
 if __name__ == "__main__":

@@ -8,18 +8,10 @@
     <link rel="icon" href="data:,">
     <link rel="preload" href="{{ url_for('static', filename='fonts/ShareTechMono-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
     <link rel="stylesheet" href="{{ url_for('static', filename='terminal.css') }}">
-    <script src="{{ url_for('static', filename='terminal.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='terminal.js') }}" type="module"></script>
 </head>
 <body>
-    {% macro icon(name) -%}
-        <span class="icon" style="--icon: url('{{ url_for('static', filename='icons/' ~ name ~ '.svg') }}')" aria-hidden="true"></span>
-    {%- endmacro %}
-    {% macro parameter(name, value, symbol) -%}
-        <div class="parameter">
-            <dt>{{ icon(symbol) }}<span>{{ name }}</span></dt>
-            <dd>{{ value }}</dd>
-        </div>
-    {%- endmacro %}
+    {% from '_icons.html' import icon %}
 
     <main class="console" aria-label="Shipboard start terminal">
         <form method="get" class="terminal-form">
@@ -30,18 +22,17 @@
                 </header>
                 <div class="readout" tabindex="0" role="region" aria-label="Generated start parameters">
                     <dl class="readout-list">
-                        {{ parameter('Scenario', parameters.scenario, 'flag') }}
-                        {{ parameter('Storyteller', parameters.storyteller, 'user-round') }}
-                        {{ parameter('Difficulty', parameters.difficulty, 'chart-no-axes-column-increasing') }}
-                        {{ parameter('Seed', parameters.seed, 'hash') }}
-                        {{ parameter('Map Clicks', parameters.map_clicks, 'crosshair') }}
-                        {{ parameter('Character Rerolls', parameters.character_rerolls, 'rotate-cw') }}
-                        {% for name, value in parameters.dlc_settings.items() %}
-                            {{ parameter(name, value, 'cpu') }}
-                        {% endfor %}
+                        {% include '_parameters.html' %}
                     </dl>
                 </div>
-                <footer class="screen-footer"><span>COLONY ROUTE / READY</span><span>SYS. 01</span></footer>
+                <footer class="screen-footer"><span id="route-status" role="status">COLONY ROUTE / READY</span><span>SYS. 01</span></footer>
+                <dialog class="boot-dialog" aria-labelledby="boot-title" aria-describedby="boot-description">
+                    <p class="boot-code">EMERGENCY POWER / STANDBY</p>
+                    <h2 id="boot-title">AUDIO SUBSYSTEM</h2>
+                    <p id="boot-description">Activate acoustic ship monitoring?</p>
+                    <button type="button" id="boot-start">{{ icon('volume-2') }} POWER UP SYSTEMS</button>
+                    <button type="button" id="boot-silent">Continue without audio</button>
+                </dialog>
             </section>
 
             <fieldset class="dlc-panel">
@@ -63,7 +54,8 @@
             <section class="status-panel" aria-labelledby="status-title">
                 <h2 id="status-title">STATUS</h2>
                 <p><span class="status-light" aria-hidden="true"></span>SYSTEMS NOMINAL</p>
-                <p><span class="status-light amber" aria-hidden="true"></span><span>MODULES ONLINE<br><span id="module-count">{{ active_dlcs|length }} / {{ dlc_options|length }}</span></span></p>
+                <p><span class="status-light" aria-hidden="true"></span>MODULES <span id="module-count">{{ active_dlcs|length }} / {{ dlc_options|length }}</span></p>
+                {% include '_service_controls.html' %}
             </section>
 
             <button class="lever" type="submit" title="Pull to randomize" aria-label="Pull to randomize">

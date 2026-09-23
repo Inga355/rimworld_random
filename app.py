@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, make_response, render_template, request
 import random
 import string
 import threading
@@ -175,12 +175,19 @@ def index():
     active_dlcs = get_active_dlcs(request.args.getlist("dlc"))
     parameters = generate_start_parameters(active_dlcs)
 
-    return render_template(
-        "index.html",
-        dlc_options=DLC_OPTIONS,
-        active_dlcs=active_dlcs,
-        parameters=parameters
-    )
+    if request.accept_mimetypes.best_match(["text/html", "application/json"]) == "application/json":
+        response = jsonify(readout=render_template("_parameters.html", parameters=parameters))
+    else:
+        response = make_response(render_template(
+            "index.html",
+            dlc_options=DLC_OPTIONS,
+            active_dlcs=active_dlcs,
+            parameters=parameters
+        ))
+
+    response.headers["Cache-Control"] = "no-store"
+    response.vary.add("Accept")
+    return response
 
 def open_browser():
     webbrowser.open_new("http://127.0.0.1:5000")

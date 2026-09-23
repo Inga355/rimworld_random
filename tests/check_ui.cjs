@@ -45,6 +45,7 @@ async function checkGeometry(page, desktop) {
     const errors = [];
     try {
         const page = await browser.newPage();
+        await page.addInitScript(() => document.addEventListener('DOMContentLoaded', () => document.querySelector('#boot-silent')?.click()));
         page.on('pageerror', error => errors.push(error.message));
         page.on('response', response => {
             if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);

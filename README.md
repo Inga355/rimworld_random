@@ -41,6 +41,14 @@ http://127.0.0.1:5000
 
 Beim Start oeffnet sich der Browser automatisch.
 
+## Ton und Effekte
+
+Der Lautsprecher-Schalter aktiviert das leise Summen und die mechanischen Geraeusche.
+Daneben befinden sich Lautstaerke und der Schalter fuer Licht- und Bildschirmflackern.
+Ton startet ausgeschaltet; Lautstaerke und Effekteinstellung werden lokal gespeichert.
+Bei verborgenen Tabs pausiert die Atmosphaere. Alle Sounds entstehen lokal im Browser.
+Weitere Details und Browser-Tests stehen in [docs/terminal-atmosphere.md](docs/terminal-atmosphere.md).
+
 ## Tests
 
 ```powershell
