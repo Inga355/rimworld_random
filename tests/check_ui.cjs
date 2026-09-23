@@ -66,9 +66,14 @@ async function checkGeometry(page, desktop) {
 
         await page.setViewportSize({ width: 1440, height: 900 });
         await page.goto(baseURL);
+        await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(baseURL).origin });
         const vanillaLever = await page.locator('.lever').boundingBox();
         const vanillaConsole = await page.locator('.console').boundingBox();
         const seedBefore = await page.locator('.parameter').filter({ hasText: 'Seed' }).locator('dd').innerText();
+        assert.equal(await page.getByText('Landing Site Rolls', { exact: true }).count(), 1);
+        await page.getByRole('button', { name: 'Copy seed', exact: true }).click();
+        assert.equal(await page.evaluate(() => navigator.clipboard.readText()), seedBefore.trim());
+        assert.equal(await page.getByRole('button', { name: 'Seed copied', exact: true }).count(), 1);
         for (const name of ['Royalty', 'Ideology', 'Biotech', 'Anomaly']) {
             await page.getByRole('checkbox', { name, exact: true }).check();
         }
@@ -100,7 +105,7 @@ async function checkGeometry(page, desktop) {
         await noJS.close();
         assert.deepEqual(errors, []);
         await fs.writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2));
-        console.log('PASS: 8 viewport screenshots; DLC/scroll geometry; randomize; keyboard; reduced motion; no-JS fallback; no browser/asset errors.');
+        console.log('PASS: 8 viewport screenshots; seed copy; landing-site label; DLC/scroll geometry; randomize; keyboard; reduced motion; no-JS fallback; no browser/asset errors.');
     } finally {
         await browser.close();
     }

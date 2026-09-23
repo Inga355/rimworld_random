@@ -82,6 +82,22 @@ class RandomizerTests(unittest.TestCase):
         self.assertIn(b'<form method="get"', response.data)
         self.assertEqual(response.headers["Cache-Control"], "no-store")
 
+    def test_lifecycle_endpoint_accepts_browser_signals(self):
+        with app.test_client() as client:
+            for action in ("connect", "heartbeat", "disconnect"):
+                response = client.post("/lifecycle", json={"action": action, "id": "test-tab"})
+                self.assertEqual(response.status_code, 204)
+
+    def test_seed_is_copyable_and_landing_roll_label_is_clear(self):
+        with app.test_client() as client:
+            response = client.get("/")
+
+        html = response.get_data(as_text=True)
+        self.assertIn('class="copy-seed"', html)
+        self.assertIn('aria-label="Copy seed"', html)
+        self.assertIn("Landing Site Rolls", html)
+        self.assertNotIn("Map Clicks", html)
+
 
 if __name__ == "__main__":
     unittest.main()

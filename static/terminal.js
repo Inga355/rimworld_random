@@ -18,6 +18,7 @@ const preferenceKey = 'rimworld-terminal-atmosphere';
 const bootDialog = document.querySelector('.boot-dialog');
 let bootPending = false;
 const timers = new Set();
+const lifecycleId = crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`;
 let effectsPreferred = true;
 let pending = false;
 soundToggle.checked = false;
@@ -47,6 +48,48 @@ function setLog(...messages) {
         return line;
     }));
 }
+
+async function copySeed(button) {
+    const value = button.dataset.copyValue;
+    try {
+        await navigator.clipboard.writeText(value);
+    } catch {
+        const field = document.createElement('textarea');
+        field.value = value;
+        field.style.position = 'fixed';
+        field.style.opacity = '0';
+        document.body.append(field);
+        field.select();
+        document.execCommand('copy');
+        field.remove();
+    }
+    button.classList.remove('is-copied');
+    void button.offsetWidth;
+    button.classList.add('is-copied');
+    button.title = 'Seed copied';
+    button.setAttribute('aria-label', 'Seed copied');
+    setLog('Seed copied.', 'Awaiting input...');
+    window.setTimeout(() => {
+        button.title = 'Copy seed';
+        button.setAttribute('aria-label', 'Copy seed');
+    }, 1400);
+}
+
+document.querySelector('.readout-list').addEventListener('click', event => {
+    const button = event.target.closest('.copy-seed');
+    if (button) void copySeed(button);
+});
+
+function signalLifecycle(action) {
+    const data = new Blob([JSON.stringify({ action, id: lifecycleId })], { type: 'application/json' });
+    if (action === 'disconnect' && navigator.sendBeacon) {
+        navigator.sendBeacon('/lifecycle', data);
+        return;
+    }
+    fetch('/lifecycle', { method: 'POST', body: data, headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(() => {});
+}
+signalLifecycle('connect');
+const lifecycleTimer = window.setInterval(() => signalLifecycle('heartbeat'), 2000);
 
 function stopAtmosphere() {
     timers.forEach(timer => window.clearTimeout(timer));
@@ -210,6 +253,8 @@ document.addEventListener('visibilitychange', () => {
 });
 
 window.addEventListener('pagehide', () => {
+    window.clearInterval(lifecycleTimer);
+    signalLifecycle('disconnect');
     stopAtmosphere();
     audio.pause();
 });

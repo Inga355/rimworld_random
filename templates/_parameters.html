@@ -1,15 +1,22 @@
 {% from '_icons.html' import icon %}
-{% macro parameter(name, value, symbol) -%}
+{% macro parameter(name, value, symbol, copyable=false) -%}
     <div class="parameter">
         <dt>{{ icon(symbol) }}<span>{{ name }}</span></dt>
-        <dd>{{ value }}</dd>
+        <dd{% if copyable %} class="seed-value"{% endif %}>
+            <span>{{ value }}</span>
+            {% if copyable %}
+                <button class="copy-seed" type="button" data-copy-value="{{ value }}" aria-label="Copy seed" title="Copy seed">
+                    {{ icon('copy') }}
+                </button>
+            {% endif %}
+        </dd>
     </div>
 {%- endmacro %}
 {{ parameter('Scenario', parameters.scenario, 'flag') }}
 {{ parameter('Storyteller', parameters.storyteller, 'user-round') }}
 {{ parameter('Difficulty', parameters.difficulty, 'chart-no-axes-column-increasing') }}
-{{ parameter('Seed', parameters.seed, 'hash') }}
-{{ parameter('Map Clicks', parameters.map_clicks, 'crosshair') }}
+{{ parameter('Seed', parameters.seed, 'hash', true) }}
+{{ parameter('Landing Site Rolls', parameters.map_clicks, 'crosshair') }}
 {{ parameter('Character Rerolls', parameters.character_rerolls, 'rotate-cw') }}
 {% for name, value in parameters.dlc_settings.items() %}
     {{ parameter(name, value, 'cpu') }}
