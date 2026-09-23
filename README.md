@@ -41,6 +41,10 @@ http://127.0.0.1:5000
 
 Beim Start oeffnet sich der Browser automatisch.
 
+Die Windows-EXE laeuft ohne zusaetzliches Konsolenfenster. Wird der geoeffnete
+Browser-Tab geschlossen, beendet sich auch das lokale Programm nach wenigen
+Sekunden. Ein normales Neuladen der Seite laesst das Programm weiterlaufen.
+
 ## Ton und Effekte
 
 Der Lautsprecher-Schalter aktiviert das leise Summen und die mechanischen Geraeusche.
@@ -82,7 +86,7 @@ dist\RimWorldRandomizer.exe
 - Storyteller
 - Schwierigkeitsgrad
 - Seed
-- Map-Positions-Klicks
+- Landing-Site-Rolls: Anzahl der Klicks auf die zufaellige Startplatzauswahl
 - Character-Rerolls
 - optionale DLC-Auswahl fuer Royalty, Ideology, Biotech und Anomaly
 

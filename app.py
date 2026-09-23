@@ -30,6 +30,31 @@ app = Flask(
     static_folder=resource_path("static")
 )
 
+IS_BUNDLED_APP = bool(getattr(sys, "frozen", False))
+APP_PORT = int(os.environ.get("RIMWORLD_RANDOM_PORT", "5000"))
+_shutdown_timer = None
+_shutdown_lock = threading.Lock()
+
+
+def cancel_pending_shutdown():
+    global _shutdown_timer
+    with _shutdown_lock:
+        if _shutdown_timer is not None:
+            _shutdown_timer.cancel()
+            _shutdown_timer = None
+
+
+def schedule_shutdown(delay=4.0):
+    global _shutdown_timer
+    if not IS_BUNDLED_APP:
+        return
+    with _shutdown_lock:
+        if _shutdown_timer is not None:
+            _shutdown_timer.cancel()
+        _shutdown_timer = threading.Timer(delay, lambda: os._exit(0))
+        _shutdown_timer.daemon = True
+        _shutdown_timer.start()
+
 
 #--------------------------------------------------------------------------------------------
 # Rimworld Vanilla Options
@@ -189,9 +214,20 @@ def index():
     response.vary.add("Accept")
     return response
 
+
+@app.post("/lifecycle")
+def lifecycle():
+    action = (request.get_json(silent=True) or {}).get("action")
+    if action in {"connect", "heartbeat"}:
+        cancel_pending_shutdown()
+    elif action == "disconnect":
+        schedule_shutdown()
+    return ("", 204)
+
 def open_browser():
-    webbrowser.open_new("http://127.0.0.1:5000")
+    webbrowser.open_new(f"http://127.0.0.1:{APP_PORT}")
 
 if __name__ == "__main__":
-    threading.Timer(1.0, open_browser).start()
-    app.run(debug=False)
+    if os.environ.get("RIMWORLD_RANDOM_NO_BROWSER") != "1":
+        threading.Timer(1.0, open_browser).start()
+    app.run(debug=False, use_reloader=False, port=APP_PORT)

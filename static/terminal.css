@@ -210,6 +210,14 @@ h1 { margin: 0 0 5px; font-size: 36px; line-height: 1.05; font-weight: 400; }
 .parameter dt span:last-child { overflow-wrap: anywhere; }
 .parameter dd { position: relative; margin: 0; padding-left: 16px; overflow-wrap: anywhere; }
 .parameter dd::before { content: ":"; position: absolute; left: 0; color: #77b975; }
+.seed-value { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.seed-value > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.copy-seed { flex: 0 0 26px; width: 26px; height: 26px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; filter: drop-shadow(0 0 3px #80f99170); }
+.copy-seed .icon { width: 17px; height: 17px; flex-basis: 17px; }
+.copy-seed:hover { color: #d2ffcc; }
+.copy-seed:focus-visible { outline: 1px solid var(--phosphor); outline-offset: 2px; }
+.copy-seed.is-copied { animation: seed-confirm 450ms ease; }
+@keyframes seed-confirm { 50% { color: #fff; filter: drop-shadow(0 0 7px #b8ffb3); transform: scale(1.12); } }
 
 .icon {
     display: inline-block;
